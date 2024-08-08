@@ -1,6 +1,7 @@
 package ldbc.snb.datagen.hadoop.miscjob;
 
 import ldbc.snb.datagen.LdbcDatagen;
+import ldbc.snb.datagen.util.RandomGeneratorFarm;
 import ldbc.snb.datagen.entities.dynamic.person.Person;
 import ldbc.snb.datagen.entities.dynamic.relations.Knows;
 import ldbc.snb.datagen.hadoop.HadoopBlockMapper;
@@ -19,6 +20,7 @@ import org.apache.hadoop.mapreduce.lib.output.SequenceFileOutputFormat;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class HadoopMergeFriendshipFiles {
@@ -48,41 +50,41 @@ public class HadoopMergeFriendshipFiles {
         public void reduce(TupleKey key, Iterable<Person> valueSet, Context context)
                 throws IOException, InterruptedException {
 
-            List<Knows> knows = new ArrayList<>();
-            Person person = null;
-            int index = 0;
-            for (Person p : valueSet) {
-                if (index == 0) {
-                    person = new Person(p);
+            if ((int)key.key == -1 && (int)key.id == -1) {
+                List<Person> persons = new ArrayList<>();
+                for (Person p : valueSet) {
+                    persons.add(new Person(p));
                 }
-                for (Knows k : p.knows()) {
-                    knows.add(k);
-                }
-                index++;
-            }
-            person.knows().clear();
-            Knows.FullComparator comparator = new Knows.FullComparator();
-            Collections.sort(knows, comparator);
-            if (knows.size() > 0) {
-                long currentTo = knows.get(0).to().accountId();
-                person.knows().add(knows.get(0));
-                for (index = 1; index < knows.size(); ++index) {
-                    Knows nextKnows = knows.get(index);
-                    if (currentTo != knows.get(index).to().accountId()) {
-                        person.knows().add(nextKnows);
-                        currentTo = nextKnows.to().accountId();
-                    } else {
-                        numRepeated++;
+                Collections.sort(persons, new Comparator<Person>() {
+                    @Override
+                    public int compare(Person p1, Person p2) {
+                        if (p1.blockId() < p2.blockId()) return -1;
+                        if (p1.blockId() < p2.blockId()) return 1;
+                        return 0;
                     }
+                });
+
+                RandomGeneratorFarm randomFarm;
+                randomFarm = new RandomGeneratorFarm();
+                for (int i = 1; i < persons.size() - 1; i += 2) {
+                    randomFarm.resetRandomGenerators(i);
+                    assert(persons.get(i - 1).blockId() == persons.get(i).blockId());
+                    Knows.createKnow(randomFarm.get(RandomGeneratorFarm.Aspect.DATE), persons.get(i), persons.get(i + 1));
+                }
+
+                for (Person p : persons) {
+                    context.write(keySetter.getKey(p), p);
+                }
+
+            }   else {
+                for (Person p : valueSet) {
+                    context.write(keySetter.getKey(p), p);
                 }
             }
-
-            //System.out.println("Num persons "+index);
-            context.write(keySetter.getKey(person), person);
         }
 
         protected void cleanup(Context context) {
-            System.out.println("Number of repeated edges: " + numRepeated);
+            // System.out.println("Number of repeated edges: " + numRepeated);
         }
     }
 

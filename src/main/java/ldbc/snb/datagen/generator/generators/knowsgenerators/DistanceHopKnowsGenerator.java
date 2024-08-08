@@ -19,6 +19,11 @@ public class DistanceHopKnowsGenerator implements KnowsGenerator {
     public void generateKnows(List<Person> persons, int seed, List<Float> percentages, int step_index) {
         randomFarm.resetRandomGenerators(seed);
 
+        // used to connect the graph
+        for (int i = 0;i < persons.size() - 1; i++) {
+            Knows.createKnow(randomFarm.get(RandomGeneratorFarm.Aspect.DATE), persons.get(i), persons.get(i + 1));
+        }
+
         for (int i = 0; i < persons.size(); ++i) {
             Person p = persons.get(i);
             int c = 0;
@@ -35,6 +40,10 @@ public class DistanceHopKnowsGenerator implements KnowsGenerator {
                 double temp_k = j + (int)((1.0 / f - 1) * c / alpha) + 1;
                 if(temp_k >= (double)persons.size()) break;
                 int k = (int)temp_k;
+
+                // used to increase diameter
+                if (k / DatagenParams.diameterGroupSize > i / DatagenParams.diameterGroupSize) break;
+
                 Person q = persons.get(k);
                 if(q.knows().size() < Knows.targetEdges(q, percentages, step_index)){
                     Knows.createKnow(randomFarm.get(RandomGeneratorFarm.Aspect.DATE), p, q);

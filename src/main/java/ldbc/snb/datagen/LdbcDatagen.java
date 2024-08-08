@@ -54,9 +54,9 @@ public class LdbcDatagen {
         String hadoopPrefix = conf.get("ldbc.snb.datagen.serializer.hadoopDir");
         FileSystem fs = FileSystem.get(conf);
         List<Float> percentages = new ArrayList<>();
-        percentages.add(0.45f);
-        percentages.add(0.45f);
-        percentages.add(0.1f);
+        percentages.add(1.0f);
+        // percentages.add(0.45f);
+        // percentages.add(0.1f);
 
         long start = System.currentTimeMillis();
         printProgress("Starting: Person generation");
@@ -78,31 +78,31 @@ public class LdbcDatagen {
         long endUniversity = System.currentTimeMillis();
 
 
-        printProgress("Creating main interest correlated edges");
+        // printProgress("Creating main interest correlated edges");
         long startInterest = System.currentTimeMillis();
 
-        knowsGenerator = new HadoopKnowsGenerator(conf,
-                                                  "ldbc.snb.datagen.hadoop.miscjob.keychanger.InterestKeySetter",
-                                                  "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
-                                                  percentages,
-                                                  1,
-                                                  conf.get("ldbc.snb.datagen.generator.knowsGenerator"));
+        // knowsGenerator = new HadoopKnowsGenerator(conf,
+        //                                           "ldbc.snb.datagen.hadoop.miscjob.keychanger.InterestKeySetter",
+        //                                           "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
+        //                                           percentages,
+        //                                           1,
+        //                                           conf.get("ldbc.snb.datagen.generator.knowsGenerator"));
 
-        knowsGenerator.run(hadoopPrefix + "/persons", hadoopPrefix + "/interestEdges");
+        // knowsGenerator.run(hadoopPrefix + "/persons", hadoopPrefix + "/interestEdges");
         long endInterest = System.currentTimeMillis();
 
 
-        printProgress("Creating random correlated edges");
+        //printProgress("Creating random correlated edges");
         long startRandom = System.currentTimeMillis();
 
-        knowsGenerator = new HadoopKnowsGenerator(conf,
-                                                  "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
-                                                  "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
-                                                  percentages,
-                                                  2,
-                                                  "ldbc.snb.datagen.generator.generators.knowsgenerators.RandomKnowsGenerator");
+        // knowsGenerator = new HadoopKnowsGenerator(conf,
+        //                                          "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
+        //                                          "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter",
+        //                                          percentages,
+        //                                          2,
+        //                                          "ldbc.snb.datagen.generator.generators.knowsgenerators.RandomKnowsGenerator");
 
-        knowsGenerator.run(hadoopPrefix + "/persons", hadoopPrefix + "/randomEdges");
+        // knowsGenerator.run(hadoopPrefix + "/persons", hadoopPrefix + "/randomEdges");
         long endRandom = System.currentTimeMillis();
 
 
@@ -110,8 +110,8 @@ public class LdbcDatagen {
         printProgress("Merging the different edge files");
         List<String> edgeFileNames = new ArrayList<>();
         edgeFileNames.add(hadoopPrefix + "/universityEdges");
-        edgeFileNames.add(hadoopPrefix + "/interestEdges");
-        edgeFileNames.add(hadoopPrefix + "/randomEdges");
+        // edgeFileNames.add(hadoopPrefix + "/interestEdges");
+        // edgeFileNames.add(hadoopPrefix + "/randomEdges");
         long startMerge = System.currentTimeMillis();
         HadoopMergeFriendshipFiles merger = new HadoopMergeFriendshipFiles(conf, "ldbc.snb.datagen.hadoop.miscjob.keychanger.RandomKeySetter");
         merger.run(hadoopPrefix + "/mergedPersons", edgeFileNames);

@@ -54,6 +54,7 @@ public class DatagenParams {
         LARGE_COMMENT_RATIO("ldbc.snb.datagen.generator.ratioLargeComment"),
         LARGE_POST_RATIO("ldbc.snb.datagen.generator.ratioLargePost"),
         LIMIT_CORRELATED("ldbc.snb.datagen.generator.limitProCorrelated"),
+        DIAMETER_GROUP_SIZE("ldbc.snb.datagen.generator.diameterGroupSize"),
         MAX_COMMENT_POST("ldbc.snb.datagen.generator.maxNumComments"),
         MAX_COMMENT_SIZE("ldbc.snb.datagen.generator.maxCommentSize"),
         MAX_COMPANIES("ldbc.snb.datagen.generator.maxCompanies"),
@@ -106,6 +107,7 @@ public class DatagenParams {
     public static double flashmobTagMinLevel = 0.0; // the flashmob tag min activity volume level
     public static double groupModeratorProb = 0.0;
     public static double limitProCorrelated = 0.0;
+    public static int diameterGroupSize = 0;
     public static double missingRatio = 0.0;
     public static double probAnotherBrowser = 0.0;
     public static double probDiffIPinTravelSeason = 0.0; // in travel season
@@ -191,6 +193,7 @@ public class DatagenParams {
             maxNumPostPerMonth = Integer.parseInt(conf.get(ParameterNames.USER_MAX_POST_MONTH.toString()));
             maxNumComments = Integer.parseInt(conf.get(ParameterNames.MAX_COMMENT_POST.toString()));
             limitProCorrelated = Double.parseDouble(conf.get(ParameterNames.LIMIT_CORRELATED.toString()));
+            diameterGroupSize = Integer.parseInt(conf.get(ParameterNames.DIAMETER_GROUP_SIZE.toString()));
             baseProbCorrelated = Double.parseDouble(conf.get(ParameterNames.BASE_CORRELATED.toString()));
             maxEmails = Integer.parseInt(conf.get(ParameterNames.MAX_EMAIL.toString()));
             maxCompanies = Integer.parseInt(conf.get(ParameterNames.MAX_EMAIL.toString()));

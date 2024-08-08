@@ -67,7 +67,7 @@ public class HadoopKnowsGenerator {
             }
             try {
                 this.keySetter = (HadoopFileKeyChanger.KeySetter) Class.forName(conf.get("postKeySetterName"))
-                                                                       .newInstance();
+                        .newInstance();
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 throw new RuntimeException(e);
@@ -82,10 +82,25 @@ public class HadoopKnowsGenerator {
                 persons.add(new Person(p));
             }
             this.knowsGenerator.generateKnows(persons, (int) key.block, percentages, step_index);
-            for (Person p : persons) {
+            // for (Person p : persons) {
+            //     context.write(keySetter.getKey(p), p);
+            //     numGeneratedEdges += p.knows().size();
+            // }
+
+            for (int i = 1; i < persons.size() - 1; i++) {
+                Person p = persons.get(i);
+                p.blockId(-1);
                 context.write(keySetter.getKey(p), p);
                 numGeneratedEdges += p.knows().size();
             }
+            Person p_head = persons.get(0);
+            Person p_tail = persons.get(persons.size() - 1);
+            p_head.blockId(key.block);
+            p_tail.blockId(key.block);
+            context.write(new TupleKey(-1, -1), p_head);
+            context.write(new TupleKey(-1, -1), p_tail);
+            numGeneratedEdges += p_head.knows().size();
+            numGeneratedEdges += p_tail.knows().size();
         }
 
         @Override

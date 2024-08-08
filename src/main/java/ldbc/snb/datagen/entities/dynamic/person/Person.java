@@ -33,6 +33,7 @@ public class Person implements Writable {
     private long birthday_;
     private boolean isLargePoster_;
     private long randomId_;
+    private long blockId_;
 
     private TreeSet<String> emails_;
     private List<Integer> languages_;
@@ -186,6 +187,7 @@ public class Person implements Writable {
         birthday_ = p.birthday();
         isLargePoster_ = p.isLargePoster();
         randomId_ = p.randomId();
+        blockId_ = p.blockId();
 
         for (String s : p.emails().descendingSet()) {
             emails_.add(s);
@@ -330,6 +332,14 @@ public class Person implements Writable {
         randomId_ = randomId;
     }
 
+    public long blockId() {
+        return blockId_;
+    }
+
+    public void blockId(long blockId) {
+        blockId_ = blockId;
+    }
+
     public TreeSet<String> emails() {
         return emails_;
     }
@@ -408,6 +418,7 @@ public class Person implements Writable {
         birthday_ = arg0.readLong();
         isLargePoster_ = arg0.readBoolean();
         randomId_ = arg0.readLong();
+        blockId_ = arg0.readLong();
 
         int numEmails = arg0.readInt();
         emails_ = new TreeSet<>();
@@ -457,6 +468,7 @@ public class Person implements Writable {
         arg0.writeLong(birthday_);
         arg0.writeBoolean(isLargePoster_);
         arg0.writeLong(randomId_);
+        arg0.writeLong(blockId_);
 
         arg0.writeInt(emails_.size());
         for (String s : emails_) {

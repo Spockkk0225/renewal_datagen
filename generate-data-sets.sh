@@ -72,6 +72,9 @@ for SF in 10; do
             echo ldbc.snb.datagen.generator.knowsGenerator:ldbc.snb.datagen.generator.generators.knowsgenerators.DistanceHopKnowsGenerator >> params.ini
             # echo ldbc.snb.datagen.generator.knowsGenerator:ldbc.snb.datagen.generator.generators.knowsgenerators.DistanceKnowsGenerator >> params.ini
 
+            # added to increase diameter
+            echo ldbc.snb.datagen.generator.diameterGroupSize:25000 >> params.ini
+
             # run datagen
             ./run.sh
 
